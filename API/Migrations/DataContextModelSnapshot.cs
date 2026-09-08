@@ -49,42 +49,72 @@ namespace API.Migrations
                         new
                         {
                             Id = 1,
-                            Description = "This is an apple",
-                            ImageUrl = "1.jpeg",
+                            Description = "Apple Watch Series",
+                            ImageUrl = "1.jpg",
                             IsActive = true,
-                            Name = "Apple 16",
-                            Price = 1000m,
-                            Stock = 200
+                            Name = "Apple Watch Series 1",
+                            Price = 70000m,
+                            Stock = 100
                         },
                         new
                         {
                             Id = 2,
-                            Description = "This is an apple",
-                            ImageUrl = "2.jpeg",
+                            Description = "Telefon açıklaması",
+                            ImageUrl = "2.jpg",
                             IsActive = true,
-                            Name = "Apple 15",
-                            Price = 1000m,
+                            Name = "Apple Watch Series 2",
+                            Price = 80000m,
                             Stock = 100
                         },
                         new
                         {
                             Id = 3,
-                            Description = "This is an apple",
-                            ImageUrl = "3.jpeg",
-                            IsActive = true,
-                            Name = "Apple 17",
-                            Price = 3000m,
+                            Description = "Telefon açıklaması",
+                            ImageUrl = "3.jpg",
+                            IsActive = false,
+                            Name = "Apple Watch Series 3",
+                            Price = 90000m,
                             Stock = 100
                         },
                         new
                         {
                             Id = 4,
-                            Description = "This is an apple",
-                            ImageUrl = "4.jpeg",
+                            Description = "Telefon açıklaması",
+                            ImageUrl = "4.jpg",
                             IsActive = true,
-                            Name = "Apple 14",
-                            Price = 4000m,
-                            Stock = 500
+                            Name = "Xiaomi Redmi Watch 1",
+                            Price = 100000m,
+                            Stock = 100
+                        },
+                        new
+                        {
+                            Id = 5,
+                            Description = "Telefon açıklaması",
+                            ImageUrl = "5.jpg",
+                            IsActive = true,
+                            Name = "Xiaomi Redmi Watch 2",
+                            Price = 100000m,
+                            Stock = 100
+                        },
+                        new
+                        {
+                            Id = 6,
+                            Description = "Telefon açıklaması",
+                            ImageUrl = "6.jpg",
+                            IsActive = true,
+                            Name = "Xiaomi Redmi Watch 3",
+                            Price = 100000m,
+                            Stock = 100
+                        },
+                        new
+                        {
+                            Id = 7,
+                            Description = "Telefon açıklaması",
+                            ImageUrl = "7.jpg",
+                            IsActive = true,
+                            Name = "Xiaomi Redmi Watch 4",
+                            Price = 100000m,
+                            Stock = 100
                         });
                 });
 #pragma warning restore 612, 618

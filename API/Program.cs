@@ -6,10 +6,10 @@ var builder = WebApplication.CreateBuilder(args);
 // Add services to the container.
 builder.Services.AddDbContext<DataContext>(options =>
 {
-   var config =builder.Configuration;
-   var connectionString = config.GetConnectionString("defaultConnection");
+    var config = builder.Configuration;
+    var connectionString = config.GetConnectionString("defaultConnection");
 
-   options.UseSqlite(connectionString);
+    options.UseSqlite(connectionString);
 });
 
 builder.Services.AddCors();
@@ -24,20 +24,20 @@ var app = builder.Build();
 if (app.Environment.IsDevelopment())
 {
     app.MapOpenApi();
-    app.UseSwaggerUI(Options=>
+    app.UseSwaggerUI(options =>
     {
-        Options.SwaggerEndpoint("/openapi/v1.json", "Demo API");
+        options.SwaggerEndpoint("/openapi/v1.json", "Demo API");
     });
 }
 
-app.UseHttpsRedirection();
+// app.UseHttpsRedirection();
 
 app.UseCors(opt =>
 {
-    opt.AllowAnyHeader()
-    .AllowAnyMethod()
-    .WithOrigins("http://localhost:3000");
+    opt.AllowAnyHeader().AllowAnyMethod().WithOrigins("http://localhost:3000");
 });
+
+app.UseStaticFiles();
 
 app.UseAuthorization();
 
