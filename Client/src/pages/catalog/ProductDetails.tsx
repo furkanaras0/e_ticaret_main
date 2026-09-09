@@ -2,6 +2,8 @@ import { CircularProgress, Divider, Grid2, TableBody, TableCell, TableContainer,
 import { useParams } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { IProduct } from "../../model/IProduct";
+import requests from "../../api/requests";
+import NotFound from "../../errors/NotFound";
 
 export default function ProductDetails() {
 
@@ -10,15 +12,14 @@ export default function ProductDetails() {
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
-        fetch(`http://localhost:5291/api/products/${id}`)
-            .then(response => response.json())
+        id && requests.Catalog.details(parseInt(id)!)
             .then(data => setProduct(data))
             .catch(error => console.log(error))
             .finally(() => setLoading(false));
     }, [id]);
 
     if (loading) return <CircularProgress />;
-    if (!product) return <h3>Product not found</h3>
+    if (!product) return <NotFound />
 
     return (
         <Grid2 container spacing={6}>

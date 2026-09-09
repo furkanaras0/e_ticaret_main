@@ -20,6 +20,8 @@ builder.Services.AddOpenApi();
 
 var app = builder.Build();
 
+app.UseMiddleware<ExeptionHandling>();
+
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
