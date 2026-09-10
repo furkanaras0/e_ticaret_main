@@ -9,14 +9,15 @@ export default function CatalogPage() {
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
-        requests.Catalog.list()
-            .then(data => setProducts(data))
-            .finally(() => setLoading(false));
-    }, [])
+      requests.Catalog.list()
+      .then(data => setProducts(data))
+      .finally(() => setLoading(false));
 
-    if (loading) return <CircularProgress />;
+    }, []);
 
+    if(loading) return <CircularProgress />
+    
     return (
         <ProductList products={products} />
-    )
+    );
 }

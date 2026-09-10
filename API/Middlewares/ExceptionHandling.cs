@@ -1,12 +1,18 @@
+using System.Text.Json;
+using Microsoft.AspNetCore.Mvc;
+
 namespace API.Middlewares;
 
-public class ExeptionHandling
+public class ExceptionHandling
 {
     private readonly RequestDelegate _next;
-    private readonly ILogger<ExeptionHandling> _logger;
+    private readonly ILogger<ExceptionHandling> _logger;
     private readonly IHostEnvironment _env;
 
-    public ExeptionHandling(RequestDelegate next, ILogger<ExeptionHandling> logger, IHostEnvironment env)
+    public ExceptionHandling(
+        RequestDelegate next,
+        ILogger<ExceptionHandling> logger,
+        IHostEnvironment env)
     {
         _next = next;
         _logger = logger;
@@ -28,17 +34,12 @@ public class ExeptionHandling
             var response = new ProblemDetails
             {
                 Status = 500,
-                Title = "Internal server error",
-                Detail = _env.IsDevelopment() ? ex.StackTrace?.ToString() : null;
-                Title = ex.Message;
-            };
-            var options = new JsonSerializerOptions
-            {
-                PropertyNamingPolicy = JsonNamingPolicy.CamelCase
+                Detail = _env.IsDevelopment() ? ex.StackTrace?.ToString() : null,
+                Title = ex.Message
             };
 
+            var options = new JsonSerializerOptions { PropertyNamingPolicy = JsonNamingPolicy.CamelCase };
             var json = JsonSerializer.Serialize(response, options);
-
             await context.Response.WriteAsync(json);
         }
     }
