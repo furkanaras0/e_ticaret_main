@@ -3,12 +3,10 @@ import { IProduct } from "../../model/IProduct";
 import { Button, Card, CardActions, CardContent, CardMedia, Typography } from "@mui/material";
 import SearchIcon from '@mui/icons-material/Search';
 import { Link } from "react-router";
-import { useState } from "react";
-import requests from "../../api/requests";
 import { LoadingButton } from "@mui/lab";
-import { useCartContext } from "../../context/CartContext";
-import { toast } from "react-toastify";
 import { currenyTRY } from "../../utils/formatCurrency";
+import { useAppDispatch, useAppSelector } from "../../hooks/hooks";
+import { addItemToCart } from "../cart/cartSlice";
 
 interface Props {
     product: IProduct
@@ -16,21 +14,8 @@ interface Props {
 
 export default function Product({product}: Props) {
 
-  const [loading, setLoading] = useState(false);
-  const { setCart } = useCartContext();
-
-  function handleAddItem(productId: number)
-  {
-    setLoading(true);
-
-    requests.Cart.addItem(productId)
-      .then(cart => {
-        setCart(cart);
-        toast.success("Sepetinize eklendi.");
-    })
-      .catch(error => console.log(error))
-      .finally(() => setLoading(false));
-  }
+  const { status } = useAppSelector(state => state.cart);
+  const dispatch = useAppDispatch();
 
     return (
      <Card>
@@ -49,8 +34,8 @@ export default function Product({product}: Props) {
           variant="outlined"
           loadingPosition="start"
           startIcon={<AddShoppingCart/>} 
-          loading={loading} 
-          onClick={() => handleAddItem(product.id)}>Sepete Ekle</LoadingButton>
+          loading={ status === "pendingAddItem" + product.id } 
+          onClick={() => dispatch(addItemToCart({productId: product.id}))}>Sepete Ekle</LoadingButton>
 
         <Button component={Link} to={`/catalog/${product.id}`} variant="outlined" size="small" startIcon={<SearchIcon />} color="primary">View</Button>
       </CardActions>

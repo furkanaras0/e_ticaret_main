@@ -1,45 +1,29 @@
 import { CircularProgress, Divider, Grid2, Stack, Table, TableBody, TableCell, TableContainer, TableRow, Typography } from "@mui/material";
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { useParams } from "react-router";
-import { IProduct } from "../../model/IProduct";
-import requests from "../../api/requests";
 import NotFound from "../../errors/NotFound";
 import { LoadingButton } from "@mui/lab";
 import { AddShoppingCart } from "@mui/icons-material";
-import { useCartContext } from "../../context/CartContext";
-import { toast } from "react-toastify";
 import { currenyTRY } from "../../utils/formatCurrency";
+import { useAppDispatch, useAppSelector } from "../../hooks/hooks";
+import { addItemToCart } from "../cart/cartSlice";
+import { fetchProductById, selectProductById } from "./catalogSlice";
 
 export default function ProductDetailsPage() {
 
-    const {cart, setCart} = useCartContext();
+    const { cart, status } = useAppSelector(state => state.cart);
+    const dispatch = useAppDispatch();
     const { id } = useParams<{id: string}>();
-    const [product, setProduct] = useState<IProduct | null>(null);
-    const [loading, setLoading] = useState(true);
-    const [isAdded, setIsAdded] = useState(false);
+    const product = useAppSelector(state => selectProductById(state, Number(id)));
+    const { status: loading} = useAppSelector(state => state.catalog);
 
     const item = cart?.cartItems.find(i => i.productId == product?.id);
 
     useEffect(() => {
-        id && requests.Catalog.details(parseInt(id))
-            .then(data => setProduct(data))
-            .catch(error => console.log(error))
-            .finally(() => setLoading(false));
+        if (!product && id) dispatch(fetchProductById(parseInt(id)))
     }, [id]);
 
-    function handleAddItem(id: number) {
-        setIsAdded(true);
-
-        requests.Cart.addItem(id)
-            .then(cart => {
-                setCart(cart);
-                toast.success("Sepetinize eklendi.");
-            })
-            .catch(error => console.log(error))
-            .finally(() => setIsAdded(false));
-    }
-
-    if(loading) return <CircularProgress />
+    if(loading === "pendingFetchProductById") return <CircularProgress />
 
     if(!product) return <NotFound />
 
@@ -76,8 +60,8 @@ export default function ProductDetailsPage() {
                         variant="outlined" 
                         loadingPosition="start"
                         startIcon={<AddShoppingCart />}
-                        loading={isAdded}
-                        onClick={() => handleAddItem(product.id)}>
+                        loading={ status === "pendingAddItem" + product.id } 
+                        onClick={() => dispatch(addItemToCart({productId: product.id}))}>
                         Sepete Ekle
                     </LoadingButton>
 

@@ -33,14 +33,14 @@ if (app.Environment.IsDevelopment())
     });
 }
 
-// app.UseHttpsRedirection();
+app.UseHttpsRedirection();
+
+app.UseStaticFiles();
 
 app.UseCors(opt =>
 {
     opt.AllowAnyHeader().AllowAnyMethod().AllowCredentials().WithOrigins("http://localhost:3000");
 });
-
-app.UseStaticFiles();
 
 app.UseAuthorization();
 

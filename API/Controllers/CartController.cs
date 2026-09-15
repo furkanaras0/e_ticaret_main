@@ -24,7 +24,7 @@ public class CartController : ControllerBase
     }
 
     [HttpPost]
-    public async Task<ActionResult<Cart>> AddItemToCart(int productId, int quantity)
+    public async Task<ActionResult> AddItemToCart(int productId, int quantity)
     {
         var cart = await GetOrCreateCart();
 
