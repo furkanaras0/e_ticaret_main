@@ -1,19 +1,21 @@
-import { Alert, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow } from "@mui/material";
+import { Alert, Box, Button, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow } from "@mui/material";
 import { AddCircleOutline, Delete, RemoveCircleOutline } from "@mui/icons-material";
 import { LoadingButton } from "@mui/lab";
 import CartSummary from "./Cartsummary";
 import { currenyTRY } from "../../utils/formatCurrency";
-import { useAppDispatch, useAppSelector } from "../../hooks/hooks";
 import { addItemToCart, deleteItemFromCart } from "./cartSlice";
+import { useAppDispatch, useAppSelector } from "../../store/store";
+import { Link } from "react-router";
 
 export default function ShoppingCartPage()
 {
     const { cart, status } = useAppSelector(state => state.cart);
     const dispatch = useAppDispatch();
 
-    if(cart?.cartItems.length === 0) return <Alert severity="warning">Sepetinizde ürün yok</Alert>
+    if(!cart || cart?.cartItems.length === 0) return <Alert severity="warning">Sepetinizde ürün yok</Alert>;
 
     return (
+      <>
         <TableContainer component={Paper}>
         <Table sx={{ minWidth: 650 }} aria-label="simple table">
           <TableHead>
@@ -33,7 +35,7 @@ export default function ShoppingCartPage()
                 sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
               >
                  <TableCell component="th" scope="row">
-                  <img src={`http://localhost:5291/images/${item.imageUrl}`} style={{height: 60}}/>
+                  <img src={`http://localhost:5291/images/${item.imageUrl}`} alt={item.name} style={{height: 60}}/>
                 </TableCell>
                 <TableCell component="th" scope="row">
                   {item.name}
@@ -53,7 +55,7 @@ export default function ShoppingCartPage()
                     <RemoveCircleOutline />
                   </LoadingButton>
                   </TableCell>
-                <TableCell align="right">{currenyTRY.format(item.price * item.quantity)} ₺</TableCell>
+                <TableCell align="right">{currenyTRY.format(item.price * item.quantity)}</TableCell>
                 <TableCell align="right">
                     <LoadingButton color="error" 
                       loading={status === "pendingDeleteItem" + item.productId + "all"} 
@@ -69,5 +71,9 @@ export default function ShoppingCartPage()
           </TableBody>
         </Table>
       </TableContainer>
+      <Box display="flex" justifyContent="flex-end" sx={{mt: 3}}>
+        <Button component={Link} to="/checkout" variant="contained" color="primary">Checkout</Button>
+      </Box>
+      </>
     );
 }

@@ -1,12 +1,12 @@
 using System.ComponentModel.DataAnnotations;
 
-namespace Api.DTO;
+namespace API.DTO;
 
-public class LoginDto{
+public class LoginDTO
+{
     [Required]
     public string UserName { get; set; } = null!;
-    
+
     [Required]
     public string Password { get; set; } = null!;
-    
 }

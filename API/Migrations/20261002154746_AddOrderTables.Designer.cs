@@ -3,6 +3,7 @@ using System;
 using API.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -10,9 +11,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace API.Migrations
 {
     [DbContext(typeof(DataContext))]
-    partial class DataContextModelSnapshot : ModelSnapshot
+    [Migration("20261002154746_AddOrderTables")]
+    partial class AddOrderTables
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "9.0.0");
@@ -125,7 +128,7 @@ namespace API.Migrations
                     b.ToTable("Carts");
                 });
 
-            modelBuilder.Entity("API.Entity.Cart+CartItem", b =>
+            modelBuilder.Entity("API.Entity.CartItem", b =>
                 {
                     b.Property<int>("CartItemId")
                         .ValueGeneratedOnAdd()
@@ -158,13 +161,7 @@ namespace API.Migrations
                     b.Property<string>("AddresLine")
                         .HasColumnType("TEXT");
 
-                    b.Property<string>("BasketId")
-                        .HasColumnType("TEXT");
-
                     b.Property<string>("City")
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("ConversationId")
                         .HasColumnType("TEXT");
 
                     b.Property<string>("CustomerId")
@@ -435,7 +432,7 @@ namespace API.Migrations
                     b.ToTable("AspNetUserTokens", (string)null);
                 });
 
-            modelBuilder.Entity("API.Entity.Cart+CartItem", b =>
+            modelBuilder.Entity("API.Entity.CartItem", b =>
                 {
                     b.HasOne("API.Entity.Cart", null)
                         .WithMany("CartItems")

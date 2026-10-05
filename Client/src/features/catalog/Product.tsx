@@ -5,8 +5,8 @@ import SearchIcon from '@mui/icons-material/Search';
 import { Link } from "react-router";
 import { LoadingButton } from "@mui/lab";
 import { currenyTRY } from "../../utils/formatCurrency";
-import { useAppDispatch, useAppSelector } from "../../hooks/hooks";
 import { addItemToCart } from "../cart/cartSlice";
+import { useAppDispatch, useAppSelector } from "../../store/store";
 
 interface Props {
     product: IProduct

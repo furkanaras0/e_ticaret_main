@@ -1,8 +1,8 @@
-using Microsoft.AspNetCore.Mvc;
 using API.Data;
-using API.Entity;
-using Microsoft.EntityFrameworkCore;
 using API.DTO;
+using API.Entity;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 namespace API.Controllers;
 
@@ -11,7 +11,6 @@ namespace API.Controllers;
 public class CartController : ControllerBase
 {
     private readonly DataContext _context;
-
     public CartController(DataContext context)
     {
         _context = context;
@@ -20,61 +19,75 @@ public class CartController : ControllerBase
     [HttpGet]
     public async Task<ActionResult<CartDTO>> GetCart()
     {
-        return CartToDTO(await GetOrCreateCart());
+        return CartToDTO(await GetOrCreate(GetCustomerId()));
     }
 
     [HttpPost]
     public async Task<ActionResult> AddItemToCart(int productId, int quantity)
     {
-        var cart = await GetOrCreateCart();
+        var cart = await GetOrCreate(GetCustomerId());
 
-        var product = await _context.Products.FirstOrDefaultAsync(p => p.Id == productId);
+        var product = await _context.Products.FirstOrDefaultAsync(i => i.Id == productId);
 
-        if (product == null) return NotFound("The product is not in database");
+        if (product == null)
+            return NotFound("The product is not in database");
 
         cart.AddItem(product, quantity);
 
         var result = await _context.SaveChangesAsync() > 0;
 
-        if (result) return CreatedAtAction(nameof(GetCart), CartToDTO(cart));
+        if (result)
+            return CreatedAtAction(nameof(GetCart), CartToDTO(cart));
 
-        return BadRequest(new ProblemDetails { Title = "The Product can not be added to cart" });
+        return BadRequest(new ProblemDetails { Title = "The product can not be added to cart" });
     }
 
     [HttpDelete]
     public async Task<ActionResult> DeleteItemFromCart(int productId, int quantity)
     {
-        var cart = await GetOrCreateCart();
+        var cart = await GetOrCreate(GetCustomerId());
 
         cart.DeleteItem(productId, quantity);
 
         var result = await _context.SaveChangesAsync() > 0;
 
-        if (result) return CreatedAtAction(nameof(GetCart), CartToDTO(cart));
+        if (result)
+            return CreatedAtAction(nameof(GetCart), CartToDTO(cart));
 
-        return BadRequest(new ProblemDetails { Title = "The Product can not be removed from cart" });
+        return BadRequest(new ProblemDetails { Title = "Problem removing item from the cart" });
     }
 
-    private async Task<Cart> GetOrCreateCart()
+    private string GetCustomerId()
+    {
+        return User.Identity?.Name ?? Request.Cookies["customerId"]!;
+    }
+
+    private async Task<Cart> GetOrCreate(string custId)
     {
         var cart = await _context.Carts
-            .Include(i => i.CartItems)
-            .ThenInclude(p => p.Product)
-            .Where(i => i.CustomerId == Request.Cookies["customerId"])
-            .FirstOrDefaultAsync();
+                    .Include(i => i.CartItems)
+                    .ThenInclude(i => i.Product)
+                    .Where(i => i.CustomerId == custId)
+                    .FirstOrDefaultAsync();
 
         if (cart == null)
         {
-            var customerId = Guid.NewGuid().ToString();
+            var customerId = User.Identity?.Name;
 
-            var cookieOptions = new CookieOptions
+            if (string.IsNullOrEmpty(customerId))
             {
-                Expires = DateTime.Now.AddMonths(1),
-                IsEssential = true
-            };
+                customerId = Guid.NewGuid().ToString();
+                var cookieOptions = new CookieOptions
+                {
+                    Expires = DateTime.Now.AddMonths(1),
+                    IsEssential = true
+                };
 
-            Response.Cookies.Append("customerId", customerId, cookieOptions);
+                Response.Cookies.Append("customerId", customerId, cookieOptions);
+            }
+
             cart = new Cart { CustomerId = customerId };
+
             _context.Carts.Add(cart);
             await _context.SaveChangesAsync();
         }
@@ -88,13 +101,13 @@ public class CartController : ControllerBase
         {
             CartId = cart.CartId,
             CustomerId = cart.CustomerId,
-            CartItems = cart.CartItems.Select(i => new CartItemDTO
+            CartItems = cart.CartItems.Select(item => new CartItemDTO
             {
-                ProductId = i.ProductId,
-                Name = i.Product.Name,
-                Price = i.Product.Price,
-                Quantity = i.Quantity,
-                ImageUrl = i.Product.ImageUrl,
+                ProductId = item.ProductId,
+                Name = item.Product.Name,
+                Price = item.Product.Price,
+                Quantity = item.Quantity,
+                ImageUrl = item.Product.ImageUrl
             }).ToList()
         };
     }
